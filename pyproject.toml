@@ -1,0 +1,18 @@
+[tool.poetry]
+name = "rabbitmq-api-admin"
+version = "0.1.0"
+description = "A python interface for the RabbitMQ Admin HTTP API"
+authors = ["Micah Hausler <opensource@ambition.com>"]
+license = "Apache License 2.0"
+
+[tool.poetry.dependencies]
+python = "~3.8"
+requests = "^2.24.0"
+six = "^1.15.0"
+
+[tool.poetry.dev-dependencies]
+pika = "~1.1.0"
+
+[build-system]
+requires = ["poetry>=1.0.5"]
+build-backend = "poetry.masonry.api"
