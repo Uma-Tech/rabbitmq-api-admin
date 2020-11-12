@@ -38,7 +38,7 @@ class AdminAPITests(TestCase):
             cls.amqp_port = 5673
             cls.admin_port = 15673
         else:  # pragma: no cover
-            cls.host = os.environ.get('RABBITMQ_HOST', '192.168.99.100')
+            cls.host = os.environ.get('RABBITMQ_HOST', '127.0.0.1')
             cls.amqp_port = 5672
             cls.admin_port = 15672
 
