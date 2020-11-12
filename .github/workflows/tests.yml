@@ -10,7 +10,6 @@ jobs:
     services:
       rabbitmq:
         image: rabbitmq:3.6.14-management
-        host: rabbit1
         ports:
           - 5672:5672
           - 15672:5672
