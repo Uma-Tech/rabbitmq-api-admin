@@ -33,7 +33,7 @@ jobs:
 
     - name: Run autotests
       run: |
-        poetry run python -m unittest --cov=./ --cov-report=xml
+        poetry run python -m unittest
       env:
         RABBITMQ_DEFAULT_USER: guest
         RABBITMQ_DEFAULT_PASS: guest
