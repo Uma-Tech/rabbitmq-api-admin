@@ -43,10 +43,11 @@ class AdminAPITests(TestCase):
         url = 'http://{host}:{port}'.format(host=cls.host,
                                             port=cls.admin_port)
         cls.api = AdminAPI(url, auth=('guest', 'guest'))
-        cls.node_name = 'rabbit@rabbit1'
 
         # connection statistics appear with a delay therefore:
         time.sleep(5)
+
+        cls.node_name = cls.api.list_nodes()[0]['name']
 
     @classmethod
     def tearDownClass(cls):
@@ -427,7 +428,7 @@ class AdminAPITests(TestCase):
             "auto_delete": False,
             "durable": True,
             "arguments": {},
-            "node": "rabbit@rabbit1"
+            "node": self.node_name
         }
         count_queue = len(self.api.list_queues_for_vhost('/'))
         self.api.create_queue_for_vhost(name, '/', body)
