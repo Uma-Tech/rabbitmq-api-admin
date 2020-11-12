@@ -5,7 +5,7 @@ on: [push, pull_request]
 jobs:
   autotests:
     runs-on: ubuntu-latest
-    container: python:3.8
+    container: python:3.5
 
     services:
       rabbitmq:
@@ -33,8 +33,7 @@ jobs:
 
     - name: Run autotests
       run: |
-        poetry run python -m unittest
+        poetry run coverage run -m unittest
+        poetry run coverage report -m
       env:
-        RABBITMQ_DEFAULT_USER: guest
-        RABBITMQ_DEFAULT_PASS: guest
         RABBITMQ_HOST: rabbitmq

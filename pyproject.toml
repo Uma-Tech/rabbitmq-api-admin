@@ -6,7 +6,7 @@ authors = ["Micah Hausler <opensource@ambition.com>"]
 license = "Apache License 2.0"
 
 [tool.poetry.dependencies]
-python = "~3.8"
+python = "~3.5"
 requests = "^2.24.0"
 six = "^1.15.0"
 
