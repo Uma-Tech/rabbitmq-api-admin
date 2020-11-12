@@ -21,6 +21,19 @@ To activate your `virtualenv` run `poetry shell`.
 
 
 ## Tests
+Before tests you need run a container with rabbit:
+
+```bash
+docker run -d \
+    -h rabbit1 \
+    -p 5672:5672 \
+    -p 15672:15672 \
+    -e RABBITMQ_DEFAULT_USER=guest \
+    -e RABBITMQ_DEFAULT_PASS=guest \
+    --name rabbit1 \
+    rabbitmq:3.7.7-management
+```
+
 To run all tests:
 
 ```bash

@@ -11,18 +11,8 @@ from rabbitmq_admin.api import AdminAPI
 
 class AdminAPITests(TestCase):
     """
-    These test cases require a docker container up and running
-    ::
-
-        docker run -d \
-            -h rabbit1 \
-            -p 5672:5672 \
-            -p 15672:15672 \
-            -e RABBITMQ_DEFAULT_USER=guest \
-            -e RABBITMQ_DEFAULT_PASS=guest \
-            --name rabbit1 \
-            rabbitmq:3-management
-
+    These test cases require a docker container up and running.
+    See CONTRIBUTING.md
     """
 
     @classmethod
@@ -70,9 +60,8 @@ class AdminAPITests(TestCase):
         self.assertIsInstance(response, dict)
 
     def test_get_cluster_name(self):
-        self.assertDictEqual(
-            self.api.get_cluster_name(),
-            {'name': 'rabbit@rabbit1'}
+        self.assertTrue(
+            self.api.get_cluster_name()['name'].startswith('rabbit@')
         )
 
     def test_list_nodes(self):
@@ -157,15 +146,15 @@ class AdminAPITests(TestCase):
         )
 
     def test_list_exchanges(self):
-        self.assertEqual(
+        self.assertGreaterEqual(
             len(self.api.list_exchanges()),
-            8
+            7
         )
 
     def test_list_exchanges_for_vhost(self):
-        self.assertEqual(
+        self.assertGreaterEqual(
             len(self.api.list_exchanges_for_vhost('/')),
-            8
+            7
         )
 
     def test_get_create_delete_exchange_for_vhost(self):
@@ -195,56 +184,29 @@ class AdminAPITests(TestCase):
         )
 
     def test_list_bindings(self):
-        self.assertEqual(
-            self.api.list_bindings(),
-            [{'arguments': {},
-              'destination': 'aliveness-test',
-              'destination_type': 'queue',
-              'properties_key': 'aliveness-test',
-              'routing_key': 'aliveness-test',
-              'source': '',
-              'vhost': '/'},
-
-             {'arguments': {},
-              'destination': 'my_queue',
-              'destination_type': 'queue',
-              'properties_key': 'my_queue',
-              'routing_key': 'my_queue',
-              'source': '',
-              'vhost': '/'},
-             {'arguments': {},
+        self.assertIn(
+            {'arguments': {},
               'destination': 'test_queue',
               'destination_type': 'queue',
               'properties_key': 'test_queue',
               'routing_key': 'test_queue',
               'source': '',
-              'vhost': '/'}]
+              'vhost': '/'},
+            self.api.list_bindings()
         )
 
     def test_list_bindings_for_vhost(self):
-        self.assertEqual(
-            self.api.list_bindings_for_vhost('/'),
-            [{'arguments': {},
-              'destination': 'aliveness-test',
-              'destination_type': 'queue',
-              'properties_key': 'aliveness-test',
-              'routing_key': 'aliveness-test',
-              'source': '',
-              'vhost': '/'},
-             {'arguments': {},
-              'destination': 'my_queue',
-              'destination_type': 'queue',
-              'properties_key': 'my_queue',
-              'routing_key': 'my_queue',
-              'source': '',
-              'vhost': '/'},
-             {'arguments': {},
-              'destination': 'test_queue',
-              'destination_type': 'queue',
-              'properties_key': 'test_queue',
-              'routing_key': 'test_queue',
-              'source': '',
-              'vhost': '/'}]
+        self.assertIn(
+            {
+                'arguments': {},
+                'destination': 'test_queue',
+                'destination_type': 'queue',
+                'properties_key': 'test_queue',
+                'routing_key': 'test_queue',
+                'source': '',
+                'vhost': '/'
+            },
+            self.api.list_bindings_for_vhost('/')
         )
 
     def test_list_vhosts(self):
@@ -448,15 +410,15 @@ class AdminAPITests(TestCase):
         )
 
     def test_list_queues(self):
-        self.assertEqual(
+        self.assertGreaterEqual(
             len(self.api.list_queues()),
-            3
+            2
         )
 
     def test_list_queues_for_vhost(self):
-        self.assertEqual(
+        self.assertGreaterEqual(
             len(self.api.list_queues_for_vhost('/')),
-            3
+            2
         )
 
     def test_get_create_delete_queue_for_vhost(self):
