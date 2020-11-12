@@ -2,7 +2,7 @@
 name = "rabbitmq-api-admin"
 version = "0.1.0"
 description = "A python interface for the RabbitMQ Admin HTTP API"
-authors = ["Micah Hausler <opensource@ambition.com>"]
+authors = ["<developers@uma.tech>"]
 license = "Apache License 2.0"
 
 [tool.poetry.dependencies]
