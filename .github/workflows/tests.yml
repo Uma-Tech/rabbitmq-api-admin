@@ -1,0 +1,47 @@
+name: autotests
+
+on: [push, pull_request]
+
+jobs:
+  autotests:
+    runs-on: ubuntu-latest
+    container: python:3.8
+
+    services:
+      rabbitmq:
+        image: rabbitmq:3.6.14-management
+        ports:
+          - 5672:5672
+          - 15672:5672
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Install poetry
+      run: |
+        pip install poetry==1.0.9
+
+    - name: Set up cache
+      uses: actions/cache@v1
+      with:
+        path: .venv
+        key: venv-${{ hashFiles('poetry.lock') }}
+
+    - name: Install dependencies
+      run: |
+        poetry config virtualenvs.in-project true
+        poetry install
+
+    - name: Run autotests
+      run: |
+        poetry run python -m unittest --cov=./ --cov-report=xml
+      env:
+        RABBITMQ_DEFAULT_USER: guest
+        RABBITMQ_DEFAULT_PASS: guest
+        AMQP_URL: 'amqp://guest:guest@rabbitmq:5672'
+
+    - name: Upload coverage to Codecov
+      uses: codecov/codecov-action@v1
+      with:
+        token: ${{ secrets.CI_CODECOV_TOKEN }}
+        file: ./coverage.xml
+        fail_ci_if_error: true
