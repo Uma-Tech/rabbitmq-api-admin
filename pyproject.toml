@@ -11,7 +11,13 @@ requests = "^2.24.0"
 six = "^1.15.0"
 
 [tool.poetry.dev-dependencies]
+# tests
+coverage = "^4.0"
+mock = "~2.0.0"
 pika = "~1.1.0"
+
+# linting
+flake8 = "~3.7.9"
 
 [build-system]
 requires = ["poetry>=1.0.5"]
