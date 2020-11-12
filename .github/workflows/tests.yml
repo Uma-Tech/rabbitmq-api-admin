@@ -37,11 +37,4 @@ jobs:
       env:
         RABBITMQ_DEFAULT_USER: guest
         RABBITMQ_DEFAULT_PASS: guest
-        AMQP_URL: 'amqp://guest:guest@rabbitmq:5672'
-
-    - name: Upload coverage to Codecov
-      uses: codecov/codecov-action@v1
-      with:
-        token: ${{ secrets.CI_CODECOV_TOKEN }}
-        file: ./coverage.xml
-        fail_ci_if_error: true
+        RABBITMQ_HOST: rabbitmq
