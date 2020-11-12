@@ -6,14 +6,12 @@ authors = ["<developers@uma.tech>"]
 license = "Apache License 2.0"
 
 [tool.poetry.dependencies]
-python = "~3.5"
+python = "~3.8"
 requests = "^2.24.0"
-six = "^1.15.0"
 
 [tool.poetry.dev-dependencies]
 # tests
 coverage = "^4.0"
-mock = "~2.0.0"
 pika = "~1.1.0"
 
 # linting
