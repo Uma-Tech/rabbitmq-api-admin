@@ -95,7 +95,7 @@ class Resource(object):
         headers = deepcopy(self.headers)
         headers.update(kwargs.get('headers', {}))
         kwargs['headers'] = headers
-        self._post(**kwargs)
+        return self._post(**kwargs)
 
     def _post(self, *args, **kwargs):
         """
@@ -108,6 +108,7 @@ class Resource(object):
             kwargs['data'] = json.dumps(kwargs['data'])
         response = requests.post(*args, **kwargs)
         response.raise_for_status()
+        return response.json() if response.content else None
 
     def _api_delete(self, url, **kwargs):
         """

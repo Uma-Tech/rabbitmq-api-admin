@@ -33,11 +33,12 @@ class AdminAPITests(TestCase):
                 credentials=credentials
             ),
         )
-        channel = cls.connection.channel()
-        channel.queue_declare(queue='test_queue')
-        channel.basic_publish(
+        cls.channel = cls.connection.channel()
+        cls.queue_name = 'test_queue'
+        cls.channel.queue_declare(queue=cls.queue_name)
+        cls.channel.basic_publish(
             exchange='',
-            routing_key='test_queue',
+            routing_key=cls.queue_name,
             body='Test Message')
 
         url = 'http://{host}:{port}'.format(host=cls.host,
@@ -51,6 +52,7 @@ class AdminAPITests(TestCase):
 
     @classmethod
     def tearDownClass(cls):
+        cls.channel.queue_delete(cls.queue_name)
         cls.connection.close()
 
     def setUp(self):
@@ -209,6 +211,24 @@ class AdminAPITests(TestCase):
             },
             self.api.list_bindings_for_vhost('/')
         )
+
+    def test_list_bindings_by_queue(self):
+        self.assertIn(
+            {
+                'arguments': {},
+                'destination': 'test_queue',
+                'destination_type': 'queue',
+                'properties_key': 'test_queue',
+                'routing_key': 'test_queue',
+                'source': '',
+                'vhost': '/'
+            },
+            self.api.list_bindings_by_queue(self.queue_name, '/')
+        )
+
+    def test_get_messages(self):
+        message = self.api.extract_messages(self.queue_name, '/')[0]
+        self.assertEqual(message['payload'], 'Test Message')
 
     def test_list_vhosts(self):
         response = self.api.list_vhosts()

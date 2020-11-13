@@ -8,6 +8,10 @@ class AdminAPI(Resource):
     The entrypoint for interacting with the RabbitMQ Management HTTP API
     """
 
+    def _quote(self, value):
+        """Quotes without saving characters."""
+        return parse.quote(value, safe='')
+
     def overview(self):
         """
         Various random bits of information that describe the whole system
@@ -99,7 +103,7 @@ class AdminAPI(Resource):
         :type name: str
         """
         return self._api_get('/api/connections/{0}'.format(
-            parse.quote(name, safe='')
+            self._quote(name)
         ))
 
     def delete_connection(self, name, reason=None):
@@ -116,7 +120,7 @@ class AdminAPI(Resource):
 
         self._api_delete(
             '/api/connections/{0}'.format(
-                parse.quote(name, safe='')
+                self._quote(name)
             ),
             headers=headers,
         )
@@ -129,7 +133,7 @@ class AdminAPI(Resource):
         :type name: str
         """
         return self._api_get('/api/connections/{0}/channels'.format(
-            parse.quote(name, safe='')
+            self._quote(name)
         ))
 
     def list_channels(self):
@@ -146,7 +150,7 @@ class AdminAPI(Resource):
         :type name: str
         """
         return self._api_get('/api/channels/{0}'.format(
-            parse.quote(name, safe='')
+            self._quote(name)
         ))
 
     def list_consumers(self):
@@ -163,7 +167,7 @@ class AdminAPI(Resource):
         :type vhost: str
         """
         return self._api_get('/api/consumers/{0}'.format(
-            parse.quote(vhost, safe='')
+            self._quote(vhost)
         ))
 
     def list_exchanges(self):
@@ -180,7 +184,7 @@ class AdminAPI(Resource):
         :type vhost: str
         """
         return self._api_get('/api/exchanges/{0}'.format(
-            parse.quote(vhost, safe='')
+            self._quote(vhost)
         ))
 
     def get_exchange_for_vhost(self, exchange, vhost):
@@ -194,8 +198,8 @@ class AdminAPI(Resource):
         :type vhost: str
         """
         return self._api_get('/api/exchanges/{0}/{1}'.format(
-            parse.quote(vhost, safe=''),
-            parse.quote(exchange, safe='')
+            self._quote(vhost),
+            self._quote(exchange)
         ))
 
     def create_exchange_for_vhost(self, exchange, vhost, body):
@@ -225,8 +229,8 @@ class AdminAPI(Resource):
         """
         self._api_put(
             '/api/exchanges/{0}/{1}'.format(
-                parse.quote(vhost, safe=''),
-                parse.quote(exchange, safe='')),
+                self._quote(vhost),
+                self._quote(exchange)),
             data=body
         )
 
@@ -247,8 +251,8 @@ class AdminAPI(Resource):
         """
         self._api_delete(
             '/api/exchanges/{0}/{1}'.format(
-                parse.quote(vhost, safe=''),
-                parse.quote(exchange, safe='')),
+                self._quote(vhost),
+                self._quote(exchange)),
             params={
                 'if-unused': if_unused
             },
@@ -268,8 +272,20 @@ class AdminAPI(Resource):
         :type vhost: str
         """
         return self._api_get('/api/bindings/{}'.format(
-            parse.quote(vhost, safe='')
+            self._quote(vhost)
         ))
+
+    def list_bindings_by_queue(self, queue, vhost):
+        """A list of all bindings on a given queue.
+
+        :param queue: The queue name
+        :type queue: str
+
+        :param vhost: The vhost name
+        :type vhost: str
+        """
+        return self._api_get(
+            f'/api/queues/{self._quote(vhost)}/{self._quote(queue)}/bindings')
 
     def list_vhosts(self):
         """
@@ -285,7 +301,7 @@ class AdminAPI(Resource):
         :type name: str
         """
         return self._api_get('/api/vhosts/{0}'.format(
-            parse.quote(name, safe='')
+            self._quote(name)
         ))
 
     def delete_vhost(self, name):
@@ -296,7 +312,7 @@ class AdminAPI(Resource):
         :type name: str
         """
         self._api_delete('/api/vhosts/{0}'.format(
-            parse.quote(name, safe='')
+            self._quote(name)
         ))
 
     def create_vhost(self, name, tracing=False):
@@ -311,7 +327,7 @@ class AdminAPI(Resource):
         """
         data = {'tracing': True} if tracing else {}
         self._api_put(
-            '/api/vhosts/{0}'.format(parse.quote(name, safe='')),
+            '/api/vhosts/{0}'.format(self._quote(name)),
             data=data,
         )
 
@@ -329,7 +345,7 @@ class AdminAPI(Resource):
         :type name: str
         """
         return self._api_get('/api/users/{0}'.format(
-            parse.quote(name, safe='')
+            self._quote(name)
         ))
 
     def delete_user(self, name):
@@ -340,7 +356,7 @@ class AdminAPI(Resource):
         :type name: str
         """
         self._api_delete('/api/users/{0}'.format(
-            parse.quote(name, safe='')
+            self._quote(name)
         ))
 
     def create_user(self, name, password, password_hash=None, tags=None):
@@ -370,7 +386,7 @@ class AdminAPI(Resource):
             data['password_hash'] = ""
 
         self._api_put(
-            '/api/users/{0}'.format(parse.quote(name, safe='')),
+            '/api/users/{0}'.format(self._quote(name)),
             data=data,
         )
 
@@ -382,7 +398,7 @@ class AdminAPI(Resource):
         :type name: str
         """
         return self._api_get('/api/users/{0}/permissions'.format(
-            parse.quote(name, safe='')
+            self._quote(name)
         ))
 
     def whoami(self):
@@ -408,8 +424,8 @@ class AdminAPI(Resource):
         :type name: str
         """
         return self._api_get('/api/permissions/{0}/{1}'.format(
-            parse.quote(vhost, safe=''),
-            parse.quote(name, safe='')
+            self._quote(vhost),
+            self._quote(name)
         ))
 
     def delete_user_permission(self, name, vhost):
@@ -423,8 +439,8 @@ class AdminAPI(Resource):
         :type vhost: str
         """
         self._api_delete('/api/permissions/{0}/{1}'.format(
-            parse.quote(vhost, safe=''),
-            parse.quote(name, safe='')
+            self._quote(vhost),
+            self._quote(name)
         ))
 
     def create_user_permission(self,
@@ -454,8 +470,8 @@ class AdminAPI(Resource):
         }
         self._api_put(
             '/api/permissions/{0}/{1}'.format(
-                parse.quote(vhost, safe=''),
-                parse.quote(name, safe='')
+                self._quote(vhost),
+                self._quote(name)
             ),
             data=data
         )
@@ -471,7 +487,7 @@ class AdminAPI(Resource):
         A list of all policies for a vhost.
         """
         return self._api_get('/api/policies/{0}'.format(
-            parse.quote(vhost, safe='')
+            self._quote(vhost)
         ))
 
     def get_policy_for_vhost(self, vhost, name):
@@ -484,8 +500,8 @@ class AdminAPI(Resource):
         :type name: str
         """
         return self._api_get('/api/policies/{0}/{1}'.format(
-            parse.quote(vhost, safe=''),
-            parse.quote(name, safe=''),
+            self._quote(vhost),
+            self._quote(name),
         ))
 
     def create_policy_for_vhost(
@@ -531,8 +547,8 @@ class AdminAPI(Resource):
         }
         self._api_put(
             '/api/policies/{0}/{1}'.format(
-                parse.quote(vhost, safe=''),
-                parse.quote(name, safe=''),
+                self._quote(vhost),
+                self._quote(name),
             ),
             data=data,
         )
@@ -547,8 +563,8 @@ class AdminAPI(Resource):
         :type name: str
         """
         self._api_delete('/api/policies/{0}/{1}/'.format(
-            parse.quote(vhost, safe=''),
-            parse.quote(name, safe=''),
+            self._quote(vhost),
+            self._quote(name),
         ))
 
     def is_vhost_alive(self, vhost):
@@ -560,7 +576,7 @@ class AdminAPI(Resource):
         :type vhost: str
         """
         return self._api_get('/api/aliveness-test/{0}'.format(
-            parse.quote(vhost, safe='')
+            self._quote(vhost)
         ))
 
     def create_queue_for_vhost(self, queue, vhost, body):
@@ -589,8 +605,8 @@ class AdminAPI(Resource):
         """
         self._api_put(
             '/api/queues/{0}/{1}'.format(
-                parse.quote(vhost, safe=''),
-                parse.quote(queue, safe='')),
+                self._quote(vhost),
+                self._quote(queue)),
             data=body
         )
 
@@ -605,8 +621,8 @@ class AdminAPI(Resource):
         :type vhost: str
         """
         return self._api_get('/api/queues/{0}/{1}'.format(
-            parse.quote(vhost, safe=''),
-            parse.quote(queue, safe='')
+            self._quote(vhost),
+            self._quote(queue)
         ))
 
     def list_queues(self):
@@ -623,8 +639,46 @@ class AdminAPI(Resource):
         :type vhost: str
         """
         return self._api_get('/api/queues/{0}'.format(
-            parse.quote(vhost, safe='')
+            self._quote(vhost)
         ))
+
+    def extract_messages(self, queue, vhost, limit=1,
+                         *,
+                         mode='ack_requeue_false',
+                         encoding='auto',
+                         truncate=None):
+        """Get messages from a queue and removed or requeued.
+
+        :param queue: The queue name
+        :type queue: str
+
+        :param vhost: The vhost name
+        :type vhost: str
+
+        :param limit: controls the maximum number of messages to get
+        :type limit: int
+
+        :param mode: determines whether the messages will be removed from
+        the queue(Ex.: ack_requeue_true, ack_requeue_false)
+        :type mode: str
+
+        :param encoding: returned string in format UTF-8(auto) or base64
+        :type encoding: str
+
+        :param truncate: truncate the message payload(in bytes)
+        :type truncate: int
+        """
+        body = {
+            'count': limit,
+            'ackmode': mode,
+            'encoding': encoding,
+        }
+        if truncate:
+            body['truncate'] = truncate
+
+        return self._api_post(
+            f'/api/queues/{self._quote(vhost)}/{self._quote(queue)}/get',
+            data=body)
 
     def delete_queue_for_vhost(self, queue, vhost, if_unused=False,
                                if_empty=False):
@@ -650,8 +704,8 @@ class AdminAPI(Resource):
         """
         self._api_delete(
             '/api/queues/{0}/{1}'.format(
-                parse.quote(vhost, safe=''),
-                parse.quote(queue, safe='')),
+                self._quote(vhost),
+                self._quote(queue)),
             params={
                 'if-unused': if_unused,
                 'if-empty': if_empty
