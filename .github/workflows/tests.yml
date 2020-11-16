@@ -33,7 +33,7 @@ jobs:
 
     - name: Run autotests
       run: |
-        poetry run coverage run -m unittest
+        poetry run coverage run --source=rabbitmq_admin -m unittest
         poetry run coverage report -m
       env:
         RABBITMQ_HOST: rabbitmq
