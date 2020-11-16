@@ -41,9 +41,7 @@ class AdminAPITests(TestCase):
             routing_key=cls.queue_name,
             body='Test Message')
 
-        url = 'http://{host}:{port}'.format(host=cls.host,
-                                            port=cls.admin_port)
-        cls.api = AdminAPI(url, auth=('guest', 'guest'))
+        cls.api = AdminAPI(cls.host, cls.admin_port, auth=('guest', 'guest'))
 
         # connection statistics appear with a delay therefore:
         time.sleep(5)

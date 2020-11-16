@@ -12,11 +12,16 @@ class Resource(object):
     # ```['GET', 'PUT', 'POST', 'DELETE']``"""
     # ALLOWED_METHODS = []
 
-    def __init__(self, url, auth):
+    def __init__(self, host, port, auth, scheme='http'):
         """
-        :param url: The RabbitMQ API url to connect to. This should include the
-            protocol and port number.
-        :type url: str
+        :param host: The RabbitMQ API host to connect to
+        :type host: str
+
+        :param port: port of RabbitMQ API
+        :type port: int
+
+        :param scheme: the protocol name
+        :type scheme: str
 
         :param auth: The authentication to pass to the request. See
             `Requests' authentication`_ documentation. For the simplest case of
@@ -26,7 +31,7 @@ class Resource(object):
 
         .. _Requests' authentication: http://docs.python-requests.org/en/latest/user/authentication/
         """
-        self.url = url.rstrip('/')
+        self.url = f'{scheme}://{host}:{port}'
         self.auth = auth
 
         self.headers = {
