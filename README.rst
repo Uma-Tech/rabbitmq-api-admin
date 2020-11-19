@@ -5,9 +5,10 @@
     :target: https://coveralls.io/r/ambitioninc/rabbitmq-admin?branch=master
 
 
-rabbitmq-admin
-==============
-This project is a python wrapper around the RabbitMQ Management HTTP API.
+rabbitmq-api-admin
+==================
+This project was taken from fork https://github.com/vaseemShaikh/rabbitmq-admin
+(last commit 996b3d386d17564faf317b1cd6bce4cf20348a74)
 
 
 Example
@@ -52,20 +53,11 @@ these, but pull requests implementing them are welcome.
 - ``/api/parameters/component/vhost [GET]``
 - ``/api/parameters/component/vhost/name [GET, PUT, DELETE]``
 
-Installation
-------------
-To install the latest release, type::
-
-    pip install rabbitmq-admin
-
-To install the latest code directly from source, type::
-
-    pip install git+git://github.com/ambitioninc/rabbitmq-admin.git
 
 Documentation
 -------------
-Full documentation is available at http://rabbitmq-admin.readthedocs.org
+Documentation is available at http://rabbitmq-admin.readthedocs.org
 
 License
 -------
-MIT License (see LICENSE)
+Apache License 2.0 (see LICENSE)

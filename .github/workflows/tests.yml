@@ -1,0 +1,39 @@
+name: autotests
+
+on: [pull_request]
+
+jobs:
+  autotests:
+    runs-on: ubuntu-latest
+    container: python:3.5
+
+    services:
+      rabbitmq:
+        image: rabbitmq:3.7.7-management
+        ports:
+          - 5672:5672
+          - 15672:5672
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Install poetry
+      run: |
+        pip install poetry==1.0.9
+
+    - name: Set up cache
+      uses: actions/cache@v1
+      with:
+        path: .venv
+        key: venv-${{ hashFiles('poetry.lock') }}
+
+    - name: Install dependencies
+      run: |
+        poetry config virtualenvs.in-project true
+        poetry install
+
+    - name: Run autotests
+      run: |
+        poetry run coverage run --source=rabbitmq_admin -m unittest
+        poetry run coverage report -m
+      env:
+        RABBITMQ_HOST: rabbitmq
