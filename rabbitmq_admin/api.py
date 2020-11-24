@@ -285,7 +285,7 @@ class RabbitAPIClient(Resource):
         :type vhost: str
         """
         return self._api_get(
-            '/api/queues/{self._quote(vhost)}/{self._quote(queue)}/bindings')
+            f'/api/queues/{self._quote(vhost)}/{self._quote(queue)}/bindings')
 
     def list_vhosts(self):
         """
