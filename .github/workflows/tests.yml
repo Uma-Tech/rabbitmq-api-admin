@@ -1,11 +1,11 @@
 name: autotests
 
-on: [pull_request]
+on: [push, pull_request]
 
 jobs:
   autotests:
     runs-on: ubuntu-latest
-    container: python:3.5
+    container: python:3.8
 
     services:
       rabbitmq:
