@@ -1,6 +1,6 @@
 name: autotests
 
-on: [push, pull_request]
+on: [pull_request]
 
 jobs:
   autotests:
