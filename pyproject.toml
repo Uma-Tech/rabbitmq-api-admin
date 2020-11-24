@@ -15,7 +15,7 @@ coverage = "^4.0"
 pika = "~1.1.0"
 
 # linting
-flake8 = "~3.7.9"
+wemake-python-styleguide = "~0.14.1"
 
 [build-system]
 requires = ["poetry>=1.0.5"]

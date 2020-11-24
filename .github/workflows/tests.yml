@@ -37,3 +37,27 @@ jobs:
         poetry run coverage report -m
       env:
         RABBITMQ_HOST: rabbitmq
+
+  lint-check:
+    runs-on: ubuntu-latest
+    container: python:3.8
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Install poetry
+        run: |
+          pip install poetry==1.0.9
+      - name: Set up cache
+        uses: actions/cache@v1
+        with:
+          path: .venv
+          key: venv-${{ hashFiles('poetry.lock') }}
+
+      - name: Install dependencies
+        run: |
+          poetry config virtualenvs.in-project true
+          poetry install
+      - name: Run lint
+        run: |
+          poetry run flake8 --count

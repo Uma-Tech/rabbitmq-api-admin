@@ -29,7 +29,8 @@ class Resource(object):
             ``('username', 'password')``
         :type auth: Requests auth
 
-        .. _Requests' authentication: http://docs.python-requests.org/en/latest/user/authentication/
+        .. _Requests' authentication:
+        http://docs.python-requests.org/en/latest/user/authentication/
         """
         self.url = f'{scheme}://{host}:{port}'
         self.auth = auth
@@ -79,7 +80,8 @@ class Resource(object):
 
     def _put(self, *args, **kwargs):
         """
-        A wrapper for putting things. It will also json encode your 'data' parameter
+        A wrapper for putting things. It will also json encode your 'data'
+        parameter
 
         :returns: The response of your put
         :rtype: dict
@@ -104,7 +106,8 @@ class Resource(object):
 
     def _post(self, *args, **kwargs):
         """
-        A wrapper for posting things. It will also json encode your 'data' parameter
+        A wrapper for posting things. It will also json encode your 'data'
+        parameter
 
         :returns: The response of your post
         :rtype: dict
