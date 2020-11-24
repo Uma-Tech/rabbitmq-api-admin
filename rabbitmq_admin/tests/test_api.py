@@ -145,19 +145,19 @@ class RabbitAPIClientTests(TestCase):
         )
 
     def test_list_exchanges(self):
-        self.assertGreaterEqual(
+        self.assertEqual(
             len(self.api.list_exchanges()),
             7
         )
 
     def test_list_exchanges_for_vhost(self):
-        self.assertGreaterEqual(
+        self.assertEqual(
             len(self.api.list_exchanges_for_vhost('/')),
             7
         )
 
     def test_get_create_delete_exchange_for_vhost(self):
-        name = 'myexchange2'
+        name = 'myexchange'
         body = {
             "type": "direct",
             "auto_delete": False,
@@ -461,3 +461,6 @@ class RabbitAPIClientTests(TestCase):
             len(self.api.list_queues_for_vhost('/')),
             1
         )
+
+        with self.assertRaises(HTTPError):
+            self.api.get_queue_for_vhost(name, '/')
