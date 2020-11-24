@@ -1,4 +1,5 @@
 import os
+import time
 from unittest import TestCase
 
 import pika
@@ -10,37 +11,19 @@ from rabbitmq_admin.api import AdminAPI
 
 class AdminAPITests(TestCase):
     """
-    These test cases require a docker container up and running
-    ::
-
-        docker run -d \
-            -h rabbit1 \
-            -p 5672:5672 \
-            -p 15672:15672 \
-            -e RABBITMQ_DEFAULT_USER=guest \
-            -e RABBITMQ_DEFAULT_PASS=guest \
-            --name rabbit1 \
-            rabbitmq:3-management
-
+    These test cases require a docker container up and running.
+    See CONTRIBUTING.md
     """
 
     @classmethod
     def setUpClass(cls):
         """
         One-time set up that connects as 'guest', creates a 'test_queue' and
-        sends one message
-
-        TravisCI sometimes turns on RabbitMQ when we don't want it, so we use
-        alternative ports 5673 and 15673
+        sends one message.
         """
-        if os.environ.get('TRAVIS'):  # pragma: no cover
-            cls.host = '127.0.0.1'
-            cls.amqp_port = 5673
-            cls.admin_port = 15673
-        else:  # pragma: no cover
-            cls.host = os.environ.get('RABBITMQ_HOST', '127.0.0.1')
-            cls.amqp_port = 5672
-            cls.admin_port = 15672
+        cls.host = os.environ.get('RABBITMQ_HOST', '127.0.0.1')
+        cls.amqp_port = 5672
+        cls.admin_port = 15672
 
         credentials = pika.PlainCredentials('guest', 'guest')
         cls.connection = pika.BlockingConnection(
@@ -50,33 +33,35 @@ class AdminAPITests(TestCase):
                 credentials=credentials
             ),
         )
-        channel = cls.connection.channel()
-        channel.queue_declare(queue='test_queue')
-        channel.basic_publish(
+        cls.channel = cls.connection.channel()
+        cls.queue_name = 'test_queue'
+        cls.channel.queue_declare(queue=cls.queue_name)
+        cls.channel.basic_publish(
             exchange='',
-            routing_key='test_queue',
+            routing_key=cls.queue_name,
             body='Test Message')
+
+        url = 'http://{host}:{port}'.format(host=cls.host,
+                                            port=cls.admin_port)
+        cls.api = AdminAPI(url, auth=('guest', 'guest'))
+
+        # connection statistics appear with a delay therefore:
+        time.sleep(5)
+
+        cls.node_name = cls.api.list_nodes()[0]['name']
 
     @classmethod
     def tearDownClass(cls):
+        cls.channel.queue_delete(cls.queue_name)
         cls.connection.close()
-
-    def setUp(self):
-        super(AdminAPITests, self).setUp()
-
-        url = 'http://{host}:{port}'.format(host=self.host, port=self.admin_port)
-
-        self.api = AdminAPI(url, auth=('guest', 'guest'))
-        self.node_name = 'rabbit@rabbit1'
 
     def test_overview(self):
         response = self.api.overview()
         self.assertIsInstance(response, dict)
 
     def test_get_cluster_name(self):
-        self.assertDictEqual(
-            self.api.get_cluster_name(),
-            {'name': 'rabbit@rabbit1'}
+        self.assertTrue(
+            self.api.get_cluster_name()['name'].startswith('rabbit@')
         )
 
     def test_list_nodes(self):
@@ -163,13 +148,13 @@ class AdminAPITests(TestCase):
     def test_list_exchanges(self):
         self.assertEqual(
             len(self.api.list_exchanges()),
-            8
+            7
         )
 
     def test_list_exchanges_for_vhost(self):
         self.assertEqual(
             len(self.api.list_exchanges_for_vhost('/')),
-            8
+            7
         )
 
     def test_get_create_delete_exchange_for_vhost(self):
@@ -181,11 +166,10 @@ class AdminAPITests(TestCase):
             "internal": False,
             "arguments": {}
         }
-
         self.api.create_exchange_for_vhost(name, '/', body)
         self.assertEqual(
             len(self.api.list_exchanges_for_vhost('/')),
-            9
+            8
         )
         self.assertEqual(
             self.api.get_exchange_for_vhost(name, '/').get('name'),
@@ -195,45 +179,33 @@ class AdminAPITests(TestCase):
         self.api.delete_exchange_for_vhost(name, '/')
         self.assertEqual(
             len(self.api.list_exchanges_for_vhost('/')),
-            8
+            7
         )
 
     def test_list_bindings(self):
-        self.assertEqual(
-            self.api.list_bindings(),
-            [{'arguments': {},
-              'destination': 'aliveness-test',
-              'destination_type': 'queue',
-              'properties_key': 'aliveness-test',
-              'routing_key': 'aliveness-test',
-              'source': '',
-              'vhost': '/'},
-             {'arguments': {},
+        self.assertIn(
+            {'arguments': {},
               'destination': 'test_queue',
               'destination_type': 'queue',
               'properties_key': 'test_queue',
               'routing_key': 'test_queue',
               'source': '',
-              'vhost': '/'}]
+              'vhost': '/'},
+            self.api.list_bindings()
         )
 
     def test_list_bindings_for_vhost(self):
-        self.assertEqual(
-            self.api.list_bindings_for_vhost('/'),
-            [{'arguments': {},
-              'destination': 'aliveness-test',
-              'destination_type': 'queue',
-              'properties_key': 'aliveness-test',
-              'routing_key': 'aliveness-test',
-              'source': '',
-              'vhost': '/'},
-             {'arguments': {},
-              'destination': 'test_queue',
-              'destination_type': 'queue',
-              'properties_key': 'test_queue',
-              'routing_key': 'test_queue',
-              'source': '',
-              'vhost': '/'}]
+        self.assertIn(
+            {
+                'arguments': {},
+                'destination': 'test_queue',
+                'destination_type': 'queue',
+                'properties_key': 'test_queue',
+                'routing_key': 'test_queue',
+                'source': '',
+                'vhost': '/'
+            },
+            self.api.list_bindings_for_vhost('/')
         )
 
     def test_list_vhosts(self):
@@ -249,7 +221,7 @@ class AdminAPITests(TestCase):
         self.assertEqual(response.get('name'), '/')
 
     def test_create_delete_vhost(self):
-        name = 'vhost2'
+        name = '/vhost-2'
 
         self.api.create_vhost(name)
         self.assertEqual(
@@ -435,17 +407,18 @@ class AdminAPITests(TestCase):
             self.api.is_vhost_alive('/'),
             {'status': 'ok'}
         )
+        self.channel.queue_delete('aliveness-test')
 
     def test_list_queues(self):
         self.assertEqual(
             len(self.api.list_queues()),
-            0
+            1
         )
 
     def test_list_queues_for_vhost(self):
         self.assertEqual(
             len(self.api.list_queues_for_vhost('/')),
-            0
+            1
         )
 
     def test_get_create_delete_queue_for_vhost(self):
@@ -454,13 +427,12 @@ class AdminAPITests(TestCase):
             "auto_delete": False,
             "durable": True,
             "arguments": {},
-            "node": "rabbit@rabbit1"
+            "node": self.node_name
         }
-
         self.api.create_queue_for_vhost(name, '/', body)
         self.assertEqual(
             len(self.api.list_queues_for_vhost('/')),
-            1
+            2
         )
         self.assertEqual(
             self.api.get_queue_for_vhost(name, '/').get('name'),
@@ -470,5 +442,8 @@ class AdminAPITests(TestCase):
         self.api.delete_queue_for_vhost(name, '/')
         self.assertEqual(
             len(self.api.list_queues_for_vhost('/')),
-            0
+            1
         )
+
+        with self.assertRaises(HTTPError):
+            self.api.get_queue_for_vhost(name, '/')
