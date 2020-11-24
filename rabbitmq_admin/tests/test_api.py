@@ -6,10 +6,10 @@ import pika
 import requests
 from requests import HTTPError
 
-from rabbitmq_admin.api import AdminAPI
+from rabbitmq_admin.api import RabbitAPIClient
 
 
-class AdminAPITests(TestCase):
+class RabbitAPIClientTests(TestCase):
     """
     These test cases require a docker container up and running.
     See CONTRIBUTING.md
@@ -41,7 +41,8 @@ class AdminAPITests(TestCase):
             routing_key=cls.queue_name,
             body='Test Message')
 
-        cls.api = AdminAPI(cls.host, cls.admin_port, auth=('guest', 'guest'))
+        cls.api = RabbitAPIClient(cls.host, cls.admin_port,
+                                  auth=('guest', 'guest'))
 
         # connection statistics appear with a delay therefore:
         time.sleep(5)
@@ -54,7 +55,7 @@ class AdminAPITests(TestCase):
         cls.connection.close()
 
     def setUp(self):
-        super(AdminAPITests, self).setUp()
+        super(RabbitAPIClientTests, self).setUp()
 
     def test_overview(self):
         response = self.api.overview()

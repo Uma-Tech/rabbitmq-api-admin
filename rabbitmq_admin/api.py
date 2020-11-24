@@ -3,7 +3,7 @@ from urllib import parse
 from rabbitmq_admin.base import Resource
 
 
-class AdminAPI(Resource):
+class RabbitAPIClient(Resource):
     """
     The entrypoint for interacting with the RabbitMQ Management HTTP API
     """
