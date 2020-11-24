@@ -589,7 +589,7 @@ class RabbitAPIClient(Resource):
                 "auto_delete":false,
                 "durable":true,
                 "arguments":{},
-                "node":"rabbit@rabbit1"
+                "node":"rabbit@rabbit_test"
             }
 
         All keys are optional.

@@ -54,9 +54,6 @@ class RabbitAPIClientTests(TestCase):
         cls.channel.queue_delete(cls.queue_name)
         cls.connection.close()
 
-    def setUp(self):
-        super(RabbitAPIClientTests, self).setUp()
-
     def test_overview(self):
         response = self.api.overview()
         self.assertIsInstance(response, dict)
@@ -168,11 +165,10 @@ class RabbitAPIClientTests(TestCase):
             "internal": False,
             "arguments": {}
         }
-        count_exchanges = len(self.api.list_exchanges_for_vhost('/'))
         self.api.create_exchange_for_vhost(name, '/', body)
         self.assertEqual(
             len(self.api.list_exchanges_for_vhost('/')),
-            count_exchanges + 1
+            8
         )
         self.assertEqual(
             self.api.get_exchange_for_vhost(name, '/').get('name'),
@@ -182,7 +178,7 @@ class RabbitAPIClientTests(TestCase):
         self.api.delete_exchange_for_vhost(name, '/')
         self.assertEqual(
             len(self.api.list_exchanges_for_vhost('/')),
-            count_exchanges
+            7
         )
 
     def test_list_bindings(self):
@@ -428,32 +424,32 @@ class RabbitAPIClientTests(TestCase):
             self.api.is_vhost_alive('/'),
             {'status': 'ok'}
         )
+        self.channel.queue_delete('aliveness-test')
 
     def test_list_queues(self):
-        self.assertGreaterEqual(
+        self.assertEqual(
             len(self.api.list_queues()),
-            2
+            1
         )
 
     def test_list_queues_for_vhost(self):
-        self.assertGreaterEqual(
+        self.assertEqual(
             len(self.api.list_queues_for_vhost('/')),
-            2
+            1
         )
 
     def test_get_create_delete_queue_for_vhost(self):
-        name = 'my_queue1'
+        name = 'my_queue'
         body = {
             "auto_delete": False,
             "durable": True,
             "arguments": {},
             "node": self.node_name
         }
-        count_queue = len(self.api.list_queues_for_vhost('/'))
         self.api.create_queue_for_vhost(name, '/', body)
         self.assertEqual(
             len(self.api.list_queues_for_vhost('/')),
-            count_queue + 1
+            2
         )
         self.assertEqual(
             self.api.get_queue_for_vhost(name, '/').get('name'),
@@ -463,5 +459,5 @@ class RabbitAPIClientTests(TestCase):
         self.api.delete_queue_for_vhost(name, '/')
         self.assertEqual(
             len(self.api.list_queues_for_vhost('/')),
-            count_queue
+            1
         )
