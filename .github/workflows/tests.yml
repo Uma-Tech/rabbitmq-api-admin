@@ -30,9 +30,11 @@ jobs:
       run: |
         poetry config virtualenvs.in-project true
         poetry install
+        apt-get update && apt-get install -y wait-for-it
 
     - name: Run autotests
       run: |
+        wait-for-it rabbitmq:5672 -t 60
         poetry run coverage run --source=rabbitmq_admin -m unittest
         poetry run coverage report -m
       env:
