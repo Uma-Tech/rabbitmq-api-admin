@@ -183,13 +183,15 @@ class RabbitAPIClientTests(TestCase):
 
     def test_list_bindings(self):
         self.assertIn(
-            {'arguments': {},
-              'destination': 'test_queue',
-              'destination_type': 'queue',
-              'properties_key': 'test_queue',
-              'routing_key': 'test_queue',
-              'source': '',
-              'vhost': '/'},
+            {
+                'arguments': {},
+                'destination': 'test_queue',
+                'destination_type': 'queue',
+                'properties_key': 'test_queue',
+                'routing_key': 'test_queue',
+                'source': '',
+                'vhost': '/'
+            },
             self.api.list_bindings()
         )
 
