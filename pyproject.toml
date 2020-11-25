@@ -1,0 +1,27 @@
+[tool.poetry]
+name = "rabbitmq-api-admin"
+version = "0.1.0"
+description = "A python interface for the RabbitMQ Admin HTTP API"
+authors = ["UMA.TECH <developers@uma.tech>"]
+license = "Apache License 2.0"
+repository = "https://github.com/Uma-Tech/rabbitmq-api-admin"
+exclude = ["rabbitmq_admin/tests"]
+packages = [
+    { include = "rabbitmq_admin" },
+]
+
+[tool.poetry.dependencies]
+python = "~3.8"
+requests = "^2.24.0"
+
+[tool.poetry.dev-dependencies]
+# tests
+coverage = "^4.0"
+pika = "~1.1.0"
+
+# linting
+flake8 = "~3.7.9"
+
+[build-system]
+requires = ["poetry>=1.0.5"]
+build-backend = "poetry.masonry.api"

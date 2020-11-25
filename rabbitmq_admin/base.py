@@ -12,11 +12,16 @@ class Resource(object):
     # ```['GET', 'PUT', 'POST', 'DELETE']``"""
     # ALLOWED_METHODS = []
 
-    def __init__(self, url, auth):
+    def __init__(self, host, port, auth, scheme='http'):
         """
-        :param url: The RabbitMQ API url to connect to. This should include the
-            protocol and port number.
-        :type url: str
+        :param host: The RabbitMQ API host to connect to
+        :type host: str
+
+        :param port: port of RabbitMQ API
+        :type port: int
+
+        :param scheme: the protocol name
+        :type scheme: str
 
         :param auth: The authentication to pass to the request. See
             `Requests' authentication`_ documentation. For the simplest case of
@@ -24,9 +29,10 @@ class Resource(object):
             ``('username', 'password')``
         :type auth: Requests auth
 
-        .. _Requests' authentication: http://docs.python-requests.org/en/latest/user/authentication/
+        .. _Requests' authentication:
+        http://docs.python-requests.org/en/latest/user/authentication/
         """
-        self.url = url.rstrip('/')
+        self.url = f'{scheme}://{host}:{port}'
         self.auth = auth
 
         self.headers = {
@@ -74,7 +80,8 @@ class Resource(object):
 
     def _put(self, *args, **kwargs):
         """
-        A wrapper for putting things. It will also json encode your 'data' parameter
+        A wrapper for putting things. It will also json encode your 'data'
+        parameter
 
         :returns: The response of your put
         :rtype: dict
@@ -95,11 +102,12 @@ class Resource(object):
         headers = deepcopy(self.headers)
         headers.update(kwargs.get('headers', {}))
         kwargs['headers'] = headers
-        self._post(**kwargs)
+        return self._post(**kwargs)
 
     def _post(self, *args, **kwargs):
         """
-        A wrapper for posting things. It will also json encode your 'data' parameter
+        A wrapper for posting things. It will also json encode your 'data'
+        parameter
 
         :returns: The response of your post
         :rtype: dict
@@ -108,6 +116,7 @@ class Resource(object):
             kwargs['data'] = json.dumps(kwargs['data'])
         response = requests.post(*args, **kwargs)
         response.raise_for_status()
+        return response.json() if response.content else None
 
     def _api_delete(self, url, **kwargs):
         """

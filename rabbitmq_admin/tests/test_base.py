@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from mock import patch, Mock
+from unittest.mock import patch, Mock
 import requests
 
 from rabbitmq_admin.base import Resource
@@ -10,16 +10,17 @@ class ResourceTests(TestCase):
 
     def setUp(self):
         self.url = 'http://127.0.0.1:15672'
+        self.host = '127.0.0.1'
+        self.port = 15672
         self.auth = ('guest', 'guest')
 
-        self.resource = Resource(self.url, self.auth)
+        self.resource = Resource(self.host, self.port, self.auth)
 
     def test_init(self):
-        resource = Resource(self.url, self.auth)
-
-        self.assertEqual(resource.url, self.url)
-        self.assertEqual(resource.auth, self.auth)
-        self.assertEqual(resource.headers, {'Content-type': 'application/json'})
+        self.assertEqual(self.resource.url, self.url)
+        self.assertEqual(self.resource.auth, self.auth)
+        self.assertEqual(self.resource.headers,
+                         {'Content-type': 'application/json'})
 
     @patch.object(requests, 'put', autospec=True)
     def test_put_no_data(self, mock_put):
