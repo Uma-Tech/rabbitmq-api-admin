@@ -6,10 +6,10 @@ import pika
 import requests
 from requests import HTTPError
 
-from rabbitmq_admin.api import AdminAPI
+from rabbitmq_admin.api import RabbitAPIClient
 
 
-class AdminAPITests(TestCase):
+class RabbitAPIClientTests(TestCase):
     """
     These test cases require a docker container up and running.
     See CONTRIBUTING.md
@@ -41,9 +41,8 @@ class AdminAPITests(TestCase):
             routing_key=cls.queue_name,
             body='Test Message')
 
-        url = 'http://{host}:{port}'.format(host=cls.host,
-                                            port=cls.admin_port)
-        cls.api = AdminAPI(url, auth=('guest', 'guest'))
+        cls.api = RabbitAPIClient(cls.host, cls.admin_port,
+                                  auth=('guest', 'guest'))
 
         # connection statistics appear with a delay therefore:
         time.sleep(5)
@@ -207,6 +206,24 @@ class AdminAPITests(TestCase):
             },
             self.api.list_bindings_for_vhost('/')
         )
+
+    def test_list_bindings_by_queue(self):
+        self.assertIn(
+            {
+                'arguments': {},
+                'destination': 'test_queue',
+                'destination_type': 'queue',
+                'properties_key': 'test_queue',
+                'routing_key': 'test_queue',
+                'source': '',
+                'vhost': '/'
+            },
+            self.api.list_bindings_by_queue(self.queue_name, '/')
+        )
+
+    def test_get_messages(self):
+        message = self.api.extract_messages(self.queue_name, '/')[0]
+        self.assertEqual(message['payload'], 'Test Message')
 
     def test_list_vhosts(self):
         response = self.api.list_vhosts()
