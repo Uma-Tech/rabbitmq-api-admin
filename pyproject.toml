@@ -2,8 +2,13 @@
 name = "rabbitmq-api-admin"
 version = "0.1.0"
 description = "A python interface for the RabbitMQ Admin HTTP API"
-authors = ["<developers@uma.tech>"]
+authors = ["UMA.TECH <developers@uma.tech>"]
 license = "Apache License 2.0"
+repository = "https://github.com/Uma-Tech/rabbitmq-api-admin"
+exclude = ["rabbitmq_admin/tests"]
+packages = [
+    { include = "rabbitmq_admin" },
+]
 
 [tool.poetry.dependencies]
 python = "~3.8"

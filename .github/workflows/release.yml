@@ -1,0 +1,22 @@
+name: release
+on:
+  release:
+    types: [released]
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    container: python:3.8
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Install poetry
+      run: |
+        pip install poetry==1.0.9
+
+    - name: Build package and publish to PyPi
+      env:
+        POETRY_PYPI_TOKEN_PYPI: ${{ secrets.TOKEN_PYPI }}
+      run: |
+        poetry build
+        poetry publish

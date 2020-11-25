@@ -34,16 +34,13 @@ Example
 
 Unsupported Management API endpoints
 ------------------------------------
-This is a list of unsupported API endpoints. Please do not make issues for
-these, but pull requests implementing them are welcome.
+This is a list of unsupported API endpoints:
 
 - ``/api/exchanges/vhost/name/bindings/source [GET]``
 - ``/api/exchanges/vhost/name/bindings/destination [GET]``
 - ``/api/exchanges/vhost/name/publish [POST]``
-- ``/api/queues/vhost/name/bindings [GET]``
 - ``/api/queues/vhost/name/contents [DELETE]``
 - ``/api/queues/vhost/name/actions [POST]``
-- ``/api/queues/vhost/name/get [POST]``
 - ``/api/bindings/vhost/e/exchange/q/queue [GET, POST]``
 - ``/api/bindings/vhost/e/exchange/q/queue/props [GET, DELETE]``
 - ``/api/bindings/vhost/e/source/e/destination [GET, POST]``
