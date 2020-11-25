@@ -71,6 +71,9 @@ per-file-ignores =
 
 exclude =
   ./.git,
+  ./venv,
+  ./.venv,
+  ./cached_venv,
 
 application-import-names =
   rabbitmq_admin,
