@@ -16,6 +16,11 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
+    - name: Install utils
+      run: |
+        apt-get update && apt-get install -y wait-for-it
+
+    - uses: actions/checkout@v2
     - name: Install poetry
       run: |
         pip install poetry==1.0.9
@@ -30,7 +35,6 @@ jobs:
       run: |
         poetry config virtualenvs.in-project true
         poetry install
-        apt-get update && apt-get install -y wait-for-it
 
     - name: Run autotests
       run: |
