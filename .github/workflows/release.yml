@@ -17,8 +17,6 @@ jobs:
     - name: Build package and publish to PyPi
       env:
         POETRY_PYPI_TOKEN_PYPI: ${{ secrets.TOKEN_PYPI }}
-        POETRY_HTTP_BASIC_PYPI_USERNAME: ${{ secrets.PYPI_USERNAME }}
-        POETRY_HTTP_BASIC_PYPI_PASSWORD: ${{ secrets.PYPI_PASSWORD }}
       run: |
         poetry build
         poetry publish
