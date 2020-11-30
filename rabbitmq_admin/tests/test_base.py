@@ -44,7 +44,8 @@ class ResourceTests(TestCase):
             headers={
                 'k1': 'v1',
                 'Content-type': 'application/json'
-            }
+            },
+            timeout=10
         )
 
     @patch.object(requests, 'post', autospec=True)
