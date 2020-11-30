@@ -12,7 +12,7 @@ class Resource(object):
     # ```['GET', 'PUT', 'POST', 'DELETE']``"""
     # ALLOWED_METHODS = []
 
-    def __init__(self, host, port, auth, scheme='http'):
+    def __init__(self, host, port, auth, scheme='http', timeout=10):
         """
         :param host: The RabbitMQ API host to connect to
         :type host: str
@@ -34,6 +34,7 @@ class Resource(object):
         """
         self.url = f'{scheme}://{host}:{port}'
         self.auth = auth
+        self.timeout = timeout
 
         self.headers = {
             'Content-type': 'application/json',
@@ -50,6 +51,7 @@ class Resource(object):
         headers = deepcopy(self.headers)
         headers.update(kwargs.get('headers', {}))
         kwargs['headers'] = headers
+        kwargs['timeout'] = self.timeout
         return self._get(**kwargs)
 
     def _get(self, *args, **kwargs):
@@ -76,6 +78,7 @@ class Resource(object):
         headers = deepcopy(self.headers)
         headers.update(kwargs.get('headers', {}))
         kwargs['headers'] = headers
+        kwargs['timeout'] = self.timeout
         self._put(**kwargs)
 
     def _put(self, *args, **kwargs):
@@ -102,6 +105,7 @@ class Resource(object):
         headers = deepcopy(self.headers)
         headers.update(kwargs.get('headers', {}))
         kwargs['headers'] = headers
+        kwargs['timeout'] = self.timeout
         return self._post(**kwargs)
 
     def _post(self, *args, **kwargs):
@@ -129,6 +133,7 @@ class Resource(object):
         headers = deepcopy(self.headers)
         headers.update(kwargs.get('headers', {}))
         kwargs['headers'] = headers
+        kwargs['timeout'] = self.timeout
         self._delete(**kwargs)
 
     def _delete(self, *args, **kwargs):
