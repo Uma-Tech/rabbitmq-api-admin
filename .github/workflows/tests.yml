@@ -9,7 +9,7 @@ jobs:
 
     services:
       rabbitmq:
-        image: rabbitmq:3.7.7-management
+        image: rabbitmq:3.9.9-management
         ports:
           - 5672:5672
           - 15672:5672
