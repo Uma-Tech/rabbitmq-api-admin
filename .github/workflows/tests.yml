@@ -1,11 +1,14 @@
 name: autotests
 
 on: [push, pull_request]
-
+    
 jobs:
   autotests:
     runs-on: ubuntu-latest
-    container: python:3.9
+    strategy:
+      matrix:
+        python: [3.8, 3.9]
+    container: python:${{ matrix.python }}
 
     services:
       rabbitmq:
@@ -46,7 +49,7 @@ jobs:
 
   lint-check:
     runs-on: ubuntu-latest
-    container: python:3.9
+    container: python:${{ matrix.python }}
 
     steps:
       - uses: actions/checkout@v2
