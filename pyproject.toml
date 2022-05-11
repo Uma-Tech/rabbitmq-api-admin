@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "rabbitmq-api-admin"
-version = "0.1.0"
+version = "0.2.0"
 description = "A python interface for the RabbitMQ Admin HTTP API"
 authors = ["UMA.TECH <developers@uma.tech>"]
 license = "Apache License 2.0"
