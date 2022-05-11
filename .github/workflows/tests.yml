@@ -5,7 +5,10 @@ on: [push, pull_request]
 jobs:
   autotests:
     runs-on: ubuntu-latest
-    container: python:3.8
+    container: python:${{ matrix.python }}
+    strategy:
+      matrix:
+        python: [3.8, 3.9, 3.10.0]
 
     services:
       rabbitmq:
@@ -25,12 +28,6 @@ jobs:
       run: |
         pip install poetry==1.0.9
 
-    - name: Set up cache
-      uses: actions/cache@v1
-      with:
-        path: .venv
-        key: venv-${{ hashFiles('poetry.lock') }}
-
     - name: Install dependencies
       run: |
         poetry config virtualenvs.in-project true
@@ -46,7 +43,10 @@ jobs:
 
   lint-check:
     runs-on: ubuntu-latest
-    container: python:3.8
+    container: python:${{ matrix.python }}
+    strategy:
+      matrix:
+        python: [3.8, 3.9, 3.10.0]
 
     steps:
       - uses: actions/checkout@v2
@@ -54,11 +54,6 @@ jobs:
       - name: Install poetry
         run: |
           pip install poetry==1.0.9
-      - name: Set up cache
-        uses: actions/cache@v1
-        with:
-          path: .venv
-          key: venv-${{ hashFiles('poetry.lock') }}
 
       - name: Install dependencies
         run: |
