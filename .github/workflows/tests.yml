@@ -5,7 +5,10 @@ on: [push, pull_request]
 jobs:
   autotests:
     runs-on: ubuntu-latest
-    container: python:3.8
+    container: python:${{ matrix.python }}
+    strategy:
+      matrix:
+        python: [3.8, 3.9, 3.10, 3.11]
 
     services:
       rabbitmq:
@@ -46,7 +49,7 @@ jobs:
 
   lint-check:
     runs-on: ubuntu-latest
-    container: python:3.8
+    container: python:${{ matrix.python }}
 
     steps:
       - uses: actions/checkout@v2
