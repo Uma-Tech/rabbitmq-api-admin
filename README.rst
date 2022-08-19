@@ -15,8 +15,8 @@ Example
 -------
 ::
 
-    >>> from rabbitmq_admin import AdminAPI
-    >>> api = AdminAPI(url='http://192.168.99.100:15672', auth=('guest', 'guest'))
+    >>> from rabbitmq_admin import RabbitAPIClient
+    >>> api = RabbitAPIClient(host='192.168.99.100', port=15672, auth=('guest', 'guest'))
     >>> api.create_vhost('second_vhost')
     >>> api.create_user('second_user', 'password')
     >>> api.create_user_permission('second_user', 'second_vhost')
