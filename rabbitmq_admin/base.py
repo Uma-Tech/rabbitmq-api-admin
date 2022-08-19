@@ -93,7 +93,7 @@ class Resource(object):
         kwargs['verify'] = self.verify
         self._put(**kwargs)
 
-    def _put(self, *args, **kwargs):
+    def _put(self, **kwargs):
         """
         A wrapper for putting things. It will also json encode your 'data'
         parameter
@@ -103,7 +103,7 @@ class Resource(object):
         """
         if 'data' in kwargs:
             kwargs['data'] = json.dumps(kwargs['data'])
-        response = requests.put(*args, **kwargs)
+        response = requests.put(**kwargs)
         response.raise_for_status()
 
     def _api_post(self, url, **kwargs):
@@ -121,7 +121,7 @@ class Resource(object):
         kwargs['verify'] = self.verify
         return self._post(**kwargs)
 
-    def _post(self, *args, **kwargs):
+    def _post(self, **kwargs):
         """
         A wrapper for posting things. It will also json encode your 'data'
         parameter
@@ -131,7 +131,7 @@ class Resource(object):
         """
         if 'data' in kwargs:
             kwargs['data'] = json.dumps(kwargs['data'])
-        response = requests.post(*args, **kwargs)
+        response = requests.post(**kwargs)
         response.raise_for_status()
         return response.json() if response.content else None
 
@@ -150,12 +150,12 @@ class Resource(object):
         kwargs['verify'] = self.verify
         self._delete(**kwargs)
 
-    def _delete(self, *args, **kwargs):
+    def _delete(self, **kwargs):
         """
         A wrapper for deleting things
 
         :returns: The response of your delete
         :rtype: dict
         """
-        response = requests.delete(*args, **kwargs)
+        response = requests.delete(**kwargs)
         response.raise_for_status()

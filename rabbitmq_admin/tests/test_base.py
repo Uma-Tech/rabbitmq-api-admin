@@ -52,8 +52,8 @@ class ResourceTests(TestCase):
             url=self.url + url,
             auth=self.auth,
             headers={
-                'k1': 'v1',
-                'Content-type': 'application/json'
+                'Content-type': 'application/json',
+                'k1': 'v1'
             },
             timeout=10,
             verify=True
