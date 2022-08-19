@@ -49,12 +49,12 @@ class ResourceTests(TestCase):
 
         self.resource._api_post(url, headers=headers)
         mock_post.assert_called_once_with(
-            url=self.url + url,
-            auth=self.auth,
             headers={
                 'Content-type': 'application/json',
                 'k1': 'v1'
             },
+            url=self.url + url,
+            auth=self.auth,
             timeout=10,
             verify=True
         )
