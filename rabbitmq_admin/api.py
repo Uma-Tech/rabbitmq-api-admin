@@ -507,7 +507,7 @@ class RabbitAPIClient(Resource):
     def create_policy_for_vhost(
             self, vhost, name,
             definition,
-            pattern=None,
+            pattern='',
             priority=0,
             apply_to='all'):
         """
