@@ -1,7 +1,7 @@
 import json
 import requests
+import urllib3
 from copy import deepcopy
-from urllib3.exceptions import InsecureRequestWarning
 
 class Resource(object):
     """
@@ -41,7 +41,7 @@ class Resource(object):
         self.verify = verify
 
         if not self.verify:
-            requests.packages.urllib3.disable_warnings(category=InsecureRequestWarning)
+            urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
         self.headers = {
             'Content-type': 'application/json',
