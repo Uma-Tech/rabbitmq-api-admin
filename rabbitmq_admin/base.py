@@ -1,7 +1,7 @@
 import json
 import requests
 from copy import deepcopy
-
+from urllib3.exceptions import InsecureRequestWarning
 
 class Resource(object):
     """
@@ -12,7 +12,7 @@ class Resource(object):
     # ```['GET', 'PUT', 'POST', 'DELETE']``"""
     # ALLOWED_METHODS = []
 
-    def __init__(self, host, port, auth, scheme='http', timeout=10):
+    def __init__(self, host, port, auth, scheme='http', timeout=10, verify=True):
         """
         :param host: The RabbitMQ API host to connect to
         :type host: str
@@ -29,12 +29,19 @@ class Resource(object):
             ``('username', 'password')``
         :type auth: Requests auth
 
+        :param verify: verifies SSL certificates for HTTPS requests
+        :type verify: bool
+
         .. _Requests' authentication:
         http://docs.python-requests.org/en/latest/user/authentication/
         """
         self.url = f'{scheme}://{host}:{port}'
         self.auth = auth
         self.timeout = timeout
+        self.verify = verify
+
+        if not self.verify:
+            requests.packages.urllib3.disable_warnings(category=InsecureRequestWarning)
 
         self.headers = {
             'Content-type': 'application/json',
@@ -52,6 +59,7 @@ class Resource(object):
         headers.update(kwargs.get('headers', {}))
         kwargs['headers'] = headers
         kwargs['timeout'] = self.timeout
+        kwargs['verify'] = self.verify
         return self._get(**kwargs)
 
     def _get(self, *args, **kwargs):
@@ -79,6 +87,7 @@ class Resource(object):
         headers.update(kwargs.get('headers', {}))
         kwargs['headers'] = headers
         kwargs['timeout'] = self.timeout
+        kwargs['verify'] = self.verify
         self._put(**kwargs)
 
     def _put(self, *args, **kwargs):
@@ -106,6 +115,7 @@ class Resource(object):
         headers.update(kwargs.get('headers', {}))
         kwargs['headers'] = headers
         kwargs['timeout'] = self.timeout
+        kwargs['verify'] = self.verify
         return self._post(**kwargs)
 
     def _post(self, *args, **kwargs):
@@ -134,6 +144,7 @@ class Resource(object):
         headers.update(kwargs.get('headers', {}))
         kwargs['headers'] = headers
         kwargs['timeout'] = self.timeout
+        kwargs['verify'] = self.verify
         self._delete(**kwargs)
 
     def _delete(self, *args, **kwargs):
