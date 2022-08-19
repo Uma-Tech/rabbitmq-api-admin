@@ -12,6 +12,7 @@ class ResourceTests(TestCase):
         self.url = 'http://127.0.0.1:15672'
         self.host = '127.0.0.1'
         self.port = 15672
+        self.scheme = "http"
         self.auth = ('guest', 'guest')
         self.timeout = 10
         self.verify = True
@@ -20,6 +21,7 @@ class ResourceTests(TestCase):
             self.host,
             self.port,
             self.auth,
+            self.scheme,
             self.timeout,
             self.verify
         )
