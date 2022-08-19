@@ -13,14 +13,24 @@ class ResourceTests(TestCase):
         self.host = '127.0.0.1'
         self.port = 15672
         self.auth = ('guest', 'guest')
+        self.timeout = 10
+        self.verify = True
 
-        self.resource = Resource(self.host, self.port, self.auth)
+        self.resource = Resource(
+            self.host,
+            self.port,
+            self.auth,
+            self.timeout,
+            self.verify
+        )
 
     def test_init(self):
         self.assertEqual(self.resource.url, self.url)
         self.assertEqual(self.resource.auth, self.auth)
         self.assertEqual(self.resource.headers,
                          {'Content-type': 'application/json'})
+        self.assertEqual(self.resource.timeout, self.timeout)
+        self.assertEqual(self.resource.verify, self.verify)
 
     @patch.object(requests, 'put', autospec=True)
     def test_put_no_data(self, mock_put):
@@ -45,7 +55,8 @@ class ResourceTests(TestCase):
                 'k1': 'v1',
                 'Content-type': 'application/json'
             },
-            timeout=10
+            timeout=10,
+            verify=True
         )
 
     @patch.object(requests, 'post', autospec=True)
