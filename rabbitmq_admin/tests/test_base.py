@@ -58,7 +58,7 @@ class ResourceTests(TestCase):
             url=self.url + url,
             auth=self.auth,
             timeout=10,
-            verify=True
+            verify=False
         )
 
     @patch.object(requests, 'post', autospec=True)
