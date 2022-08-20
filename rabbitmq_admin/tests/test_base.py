@@ -15,7 +15,7 @@ class ResourceTests(TestCase):
         self.scheme = "http"
         self.auth = ('guest', 'guest')
         self.timeout = 10
-        self.verify = True
+        self.verify = False
 
         self.resource = Resource(
             self.host,
