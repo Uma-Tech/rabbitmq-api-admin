@@ -18,12 +18,12 @@ jobs:
           - 15672:5672
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
     - name: Install utils
       run: |
         apt-get update && apt-get install -y wait-for-it
 
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
     - name: Install poetry
       run: |
         pip install poetry==1.1.14
@@ -49,7 +49,7 @@ jobs:
         python: [3.8, 3.9, 3.10.0]
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
       - name: Install poetry
         run: |
