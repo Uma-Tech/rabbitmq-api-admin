@@ -3,6 +3,7 @@ import requests
 import urllib3
 from copy import deepcopy
 
+
 class Resource(object):
     """
     A base class for API resources
@@ -12,7 +13,9 @@ class Resource(object):
     # ```['GET', 'PUT', 'POST', 'DELETE']``"""
     # ALLOWED_METHODS = []
 
-    def __init__(self, host, port, auth, scheme='http', timeout=10, verify=True):
+    def __init__(
+            self, host, port, auth, scheme='http', timeout=10, verify=True
+    ):
         """
         :param host: The RabbitMQ API host to connect to
         :type host: str
